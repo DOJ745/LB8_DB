@@ -4,10 +4,11 @@ import android.util.Log;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -28,27 +29,28 @@ public class XMLOperations {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-            // root elements - Tasks
+            // Root elements - Tasks
             Document doc = docBuilder.newDocument();
             Element rootElement = doc.createElement("Tasks");
             doc.appendChild(rootElement);
 
-            // task elements
+            // Task elements
             Element task = doc.createElement("task");
             rootElement.appendChild(task);
             task.setAttribute("category", "study");
+            task.setAttribute("id", "1");
 
-            // info elements
+            // Info elements
             Element info = doc.createElement("info");
             info.appendChild(doc.createTextNode("12345"));
             task.appendChild(info);
 
-            // date elements
+            // Date elements
             Element date = doc.createElement("date");
             date.appendChild(doc.createTextNode("14-9-2020"));
             task.appendChild(date);
 
-            // write the content into xml file
+            // Write the content into xml file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
@@ -60,7 +62,7 @@ public class XMLOperations {
             return xmlFile;
         }
 
-        public static void readXML(File readedXML){
+        public static void readXMLRaw(File readedXML){
             DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
             try{
                 DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
@@ -74,24 +76,24 @@ public class XMLOperations {
             }
         }
 
-        public static void addTask(File readedXML, String newInfo,
-                                   String newDate, String newCategory)
+        public static void addTask(File readedXML, Task newTask)
                 throws ParserConfigurationException, IOException, SAXException, TransformerException {
             DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
             DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
             Document doc = xmlBuilder.parse(readedXML);
 
-            Element rootElement = (Element) doc.getElementsByTagName("Tasks");
+            Element rootElement = doc.getDocumentElement();
             Element task = doc.createElement("task");
             rootElement.appendChild(task);
-            task.setAttribute("category", newCategory);
+            task.setAttribute("category", newTask.getCategory());
+            task.setAttribute("id", String.valueOf(newTask.getId()));
 
             Element info = doc.createElement("info");
-            info.appendChild(doc.createTextNode(newInfo));
+            info.appendChild(doc.createTextNode(newTask.getInfo()));
             task.appendChild(info);
 
             Element date = doc.createElement("date");
-            date.appendChild(doc.createTextNode(newDate));
+            date.appendChild(doc.createTextNode(newTask.getDate()));
             task.appendChild(date);
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -101,7 +103,33 @@ public class XMLOperations {
             transformer.transform(source, result);
             Log.e("log_file", "Task added successfully!");
 
-            readXML(readedXML);
+            readXMLRaw(readedXML);
+        }
+
+        public static void changeTask(File readedXML, String newInfo,
+                                      String newDate, String newCategory, String id)
+                throws ParserConfigurationException, IOException, SAXException, TransformerException {
+            DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
+            DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
+            Document doc = xmlBuilder.parse(readedXML);
+
+            Element task = doc.getElementById(id);
+
+            if(newCategory != null){ task.setAttribute("category", newCategory); }
+            Node taskInfo = task.getFirstChild();
+            Node taskDate = task.getLastChild();
+
+            if(newInfo != null){ taskInfo.setTextContent(newInfo); }
+            if(newDate != null){ taskDate.setTextContent(newDate);}
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(readedXML);
+            transformer.transform(source, result);
+            Log.e("log_file", "Task changed successfully!");
+
+            readXMLRaw(readedXML);
         }
     }
 }

@@ -11,10 +11,13 @@ import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.xml.sax.SAXException;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     public static String LOG_TASK = "log_task";
 
     public static String FILENAME = "LB8.xml";
-    public static String FILEPATH;
     public static String PICKED_DATE;
 
     public static ArrayList<Task> TASKS = new ArrayList<>();
@@ -41,10 +43,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        File xmlFile = null;
         try {
-            File xmlFile = checkFile();
-            XMLOperations.Operations.readXML(xmlFile);
+            xmlFile = checkFile();
         } catch (TransformerException | ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+        XMLOperations.Operations.readXMLRaw(xmlFile);
+        try {
+            XMLOperations.Operations.addTask(xmlFile,
+                    new Task("randomInfo", "15-9-2020", "Home", "TODO"));
+        } catch (ParserConfigurationException | IOException | SAXException | TransformerException e) {
+            e.printStackTrace();
+        }
+        try {
+            XMLOperations.Operations.changeTask(xmlFile, "newrandInfo",
+                    "12-9-2020","Class", "TODO");
+        } catch (ParserConfigurationException | TransformerException | SAXException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -78,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alertDialog = warning.create();
             alertDialog.show();
             mainFile = XMLOperations.Operations.createXMLFile(super.getFilesDir(), FILENAME);
+            //Categories.add()
             return mainFile;
         }
         return mainFile;
