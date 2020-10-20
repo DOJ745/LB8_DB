@@ -11,6 +11,7 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -51,13 +52,8 @@ public class XMLOperations {
             task.appendChild(date);
 
             // Write the content into xml file
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            DOMSource source = new DOMSource(doc);
             File xmlFile = new File(filePath, fileName);
-            StreamResult result = new StreamResult(xmlFile);
-
-            transformer.transform(source, result);
+            saveChanges(doc, xmlFile);
             Log.e("log_file", "File saved!");
             return xmlFile;
         }
@@ -75,6 +71,13 @@ public class XMLOperations {
                 e.printStackTrace();
             }
         }
+
+        /*public static ArrayList<Task> readTasks(File readedXML) throws ParserConfigurationException,
+                IOException, SAXException {
+            DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
+            DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
+            Document doc = xmlBuilder.parse(readedXML);
+        }*/
 
         public static void addTask(File readedXML, Task newTask)
                 throws ParserConfigurationException, IOException, SAXException, TransformerException {
@@ -96,13 +99,8 @@ public class XMLOperations {
             date.appendChild(doc.createTextNode(newTask.getDate()));
             task.appendChild(date);
 
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(readedXML);
-            transformer.transform(source, result);
+            saveChanges(doc, readedXML);
             Log.e("log_file", "Task added successfully!");
-
             readXMLRaw(readedXML);
         }
 
@@ -122,14 +120,34 @@ public class XMLOperations {
             if(newInfo != null){ taskInfo.setTextContent(newInfo); }
             if(newDate != null){ taskDate.setTextContent(newDate);}
 
+            saveChanges(doc, readedXML);
+            Log.e("log_file", "Task changed successfully!");
+            readXMLRaw(readedXML);
+        }
+
+        public static void deleteTask(File readedXML, String id) throws ParserConfigurationException, IOException,
+                SAXException, TransformerException {
+            DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
+            DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
+            Document doc = xmlBuilder.parse(readedXML);
+            NodeList tasks = doc.getElementsByTagName("task");
+
+            for(int i = 0; i < tasks.getLength(); i++){
+                Element task = (Element) tasks.item(i);
+                String checkId = task.getAttribute("id");
+                if(id.equals(checkId)){
+                    task.getParentNode().removeChild(task);
+                    saveChanges(doc, readedXML);
+                }
+            }
+        }
+
+        private static void saveChanges(Document doc, File XML) throws TransformerException {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(readedXML);
+            StreamResult result = new StreamResult(XML);
             transformer.transform(source, result);
-            Log.e("log_file", "Task changed successfully!");
-
-            readXMLRaw(readedXML);
         }
     }
 }

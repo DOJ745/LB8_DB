@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (TransformerException | ParserConfigurationException e) {
             e.printStackTrace();
         }
+
         XMLOperations.Operations.readXMLRaw(xmlFile);
         try {
             XMLOperations.Operations.addTask(xmlFile,
@@ -56,10 +57,17 @@ public class MainActivity extends AppCompatActivity {
         } catch (ParserConfigurationException | IOException | SAXException | TransformerException e) {
             e.printStackTrace();
         }
+
         try {
             XMLOperations.Operations.changeTask(xmlFile, "newrandInfo",
                     "12-9-2020","Class", "TODO");
         } catch (ParserConfigurationException | TransformerException | SAXException | IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            XMLOperations.Operations.deleteTask(xmlFile, "1");
+        } catch (ParserConfigurationException | IOException | SAXException | TransformerException e) {
             e.printStackTrace();
         }
     }
