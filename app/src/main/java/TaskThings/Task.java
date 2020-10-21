@@ -1,6 +1,7 @@
-package by.bstu.faa.lb8db;
+package TaskThings;
+import java.io.Serializable;
 
-public class Task {
+public class Task implements Serializable {
     private String info;
     private String date;
     private String category;
@@ -20,6 +21,11 @@ public class Task {
     public String getCategory(){ return category; }
     public String getId(){ return name; }
 
+    public void setCategory(String category) { this.category = category; }
+    public void setDate(String date) { this.date = date; }
+    public void setInfo(String info) { this.info = info; }
+    public void setName(String name) { this.name = name; }
+
     @Override
-    public String toString(){ return date + ":" + info + ":" + category; }
+    public String toString(){ return name + ":" + date + ":" + info + ":" + category; }
 }

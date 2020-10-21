@@ -4,11 +4,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
+import android.view.View;
 import android.widget.CalendarView;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import org.xml.sax.SAXException;
@@ -20,6 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import TaskThings.Task;
+import TaskThings.XMLOperations;
+
 public class MainActivity extends AppCompatActivity {
     public static int MAX_TASKS = 20;
     public static int MAX_CATEGORIES = 5;
@@ -30,14 +33,10 @@ public class MainActivity extends AppCompatActivity {
     public static String PICKED_DATE;
 
     public static ArrayList<Task> TASKS = new ArrayList<>();
-    ArrayList<String> Categories = new ArrayList<>();
+    ArrayList<String> CATEGORIES = new ArrayList<>();
     TextView pickedDate;
-    EditText editNote;
     CalendarView calendarView;
 
-    Button addButton;
-    Button changeButton;
-    Button deleteButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,9 +45,27 @@ public class MainActivity extends AppCompatActivity {
         File xmlFile = null;
         try {
             xmlFile = checkFile();
-        } catch (TransformerException | ParserConfigurationException e) {
+        } catch (TransformerException | ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
         }
+
+        pickedDate = findViewById(R.id.pickedDate);
+        calendarView = findViewById(R.id.calendarView);
+
+        final File finalXmlFile = xmlFile;
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(CalendarView calendarView, int i,
+                                            int i1, int i2) {
+                pickedDate.setText(i2 + "-" + i1 + "-" + i);
+                PICKED_DATE = pickedDate.getText().toString();
+                try {
+                    TASKS = XMLOperations.Operations.getDateTasks(finalXmlFile, PICKED_DATE);
+                } catch (ParserConfigurationException | IOException | SAXException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         XMLOperations.Operations.readXMLRaw(xmlFile);
         try {
@@ -84,7 +101,8 @@ public class MainActivity extends AppCompatActivity {
         return flag;
     }
 
-    public File checkFile() throws TransformerException, ParserConfigurationException {
+    public File checkFile()
+            throws TransformerException, ParserConfigurationException, IOException, SAXException {
         boolean isExist = existFile(FILENAME);
         File mainFile = new File(super.getFilesDir(), FILENAME);
         if (isExist) {
@@ -101,9 +119,21 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alertDialog = warning.create();
             alertDialog.show();
             mainFile = XMLOperations.Operations.createXMLFile(super.getFilesDir(), FILENAME);
-            //Categories.add()
+            CATEGORIES = XMLOperations.Operations.getCategories(mainFile);
             return mainFile;
         }
         return mainFile;
+    }
+
+    public void showTasks(View view){
+        Intent intent = new Intent(this, TaskListActivity.class);
+        intent.putExtra("TaskList", TASKS);
+        startActivity(intent);
+    }
+
+    public void showCategories(View view){
+        Intent intent = new Intent(this, TaskCategoriesActivity.class);
+        intent.putExtra("TaskCategories", CATEGORIES);
+        startActivity(intent);
     }
 }

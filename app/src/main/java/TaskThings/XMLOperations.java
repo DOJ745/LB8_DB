@@ -1,5 +1,4 @@
-package by.bstu.faa.lb8db;
-
+package TaskThings;
 import android.util.Log;
 
 import org.w3c.dom.Document;
@@ -17,7 +16,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -72,12 +70,52 @@ public class XMLOperations {
             }
         }
 
-        /*public static ArrayList<Task> readTasks(File readedXML) throws ParserConfigurationException,
-                IOException, SAXException {
+        public static ArrayList<String> getCategories(File readedXML)
+                throws ParserConfigurationException, IOException, SAXException {
             DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
             DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
             Document doc = xmlBuilder.parse(readedXML);
-        }*/
+            NodeList tasksNode = doc.getElementsByTagName("task");
+            ArrayList<String> categoryList = new ArrayList<>();
+
+            for(int i = 0; i < tasksNode.getLength(); i++) {
+                Element task = (Element) tasksNode.item(i);
+                String taskCategory = task.getAttribute("category");
+                categoryList.add(taskCategory);
+            }
+            return categoryList;
+        }
+
+        public static ArrayList<Task> getDateTasks(File readedXML, String currentDate)
+                throws ParserConfigurationException, IOException, SAXException {
+            DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
+            DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
+            Document doc = xmlBuilder.parse(readedXML);
+            NodeList tasksNode = doc.getElementsByTagName("task");
+            ArrayList<Task> taskList = new ArrayList<>();
+
+            for(int i = 0; i < tasksNode.getLength(); i++){
+                Task findedTask = new Task();
+                String taskInfo;
+                String taskDate;
+                Element task = (Element) tasksNode.item(i);
+                String taskName = task.getAttribute("id");
+                String taskCategory = task.getAttribute("category");
+
+                Node infoNode = task.getFirstChild();
+                Node dateNode = task.getLastChild();
+                taskInfo = infoNode.getTextContent();
+                taskDate = dateNode.getTextContent();
+
+                findedTask.setCategory(taskCategory);
+                findedTask.setDate(taskDate);
+                findedTask.setInfo(taskInfo);
+                findedTask.setName(taskName);
+                if(taskDate.equals(currentDate)){ taskList.add(findedTask); }
+            }
+
+            return taskList;
+        }
 
         public static void addTask(File readedXML, Task newTask)
                 throws ParserConfigurationException, IOException, SAXException, TransformerException {
@@ -118,7 +156,7 @@ public class XMLOperations {
             Node taskDate = task.getLastChild();
 
             if(newInfo != null){ taskInfo.setTextContent(newInfo); }
-            if(newDate != null){ taskDate.setTextContent(newDate);}
+            if(newDate != null){ taskDate.setTextContent(newDate); }
 
             saveChanges(doc, readedXML);
             Log.e("log_file", "Task changed successfully!");
@@ -138,6 +176,7 @@ public class XMLOperations {
                 if(id.equals(checkId)){
                     task.getParentNode().removeChild(task);
                     saveChanges(doc, readedXML);
+                    Log.e("log_file", "Task deleted successfully!");
                 }
             }
         }
