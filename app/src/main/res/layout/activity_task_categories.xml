@@ -12,6 +12,14 @@
         android:orientation="vertical"
         tools:ignore="MissingConstraints">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_allCategories"
+            android:textAlignment="center"
+            android:textColor="@color/colorBlack"
+            android:textSize="10pt"/>
+
         <ListView
             android:choiceMode="multipleChoice"
             android:id="@+id/categoryList"

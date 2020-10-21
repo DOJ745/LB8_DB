@@ -27,5 +27,8 @@ public class Task implements Serializable {
     public void setName(String name) { this.name = name; }
 
     @Override
-    public String toString(){ return name + ":" + date + ":" + info + ":" + category; }
+    public String toString(){
+       return "Название - " + name + "; Дата: " + date + "\n"
+               + "Информация: " + info + "; Категория: " + category;
+    }
 }

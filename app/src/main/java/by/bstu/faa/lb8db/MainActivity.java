@@ -113,8 +113,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void showCategories(View view)
-            throws IOException, SAXException, ParserConfigurationException {
+    public void showCategories(View view) {
         Intent intent = new Intent(this, TaskCategoriesActivity.class);
         intent.putExtra("TaskCategories", CATEGORIES);
         startActivity(intent);
