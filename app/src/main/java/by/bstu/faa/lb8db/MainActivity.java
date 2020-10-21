@@ -24,16 +24,18 @@ import TaskThings.Task;
 import TaskThings.XMLOperations;
 
 public class MainActivity extends AppCompatActivity {
-    public static int MAX_TASKS = 20;
-    public static int MAX_CATEGORIES = 5;
+    // public static int MAX_TASKS = 20;
+   // public static int MAX_CATEGORIES = 5;
     public static String LOG_FILE = "log_file";
     public static String LOG_TASK = "log_task";
 
     public static String FILENAME = "LB8.xml";
+    public static File XMLFILE;
     public static String PICKED_DATE;
 
     public static ArrayList<Task> TASKS = new ArrayList<>();
-    ArrayList<String> CATEGORIES = new ArrayList<>();
+    String[] CATEGORIES;
+
     TextView pickedDate;
     CalendarView calendarView;
 
@@ -45,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         File xmlFile = null;
         try {
             xmlFile = checkFile();
+            XMLFILE = xmlFile;
+            CATEGORIES = XMLOperations.Operations.getCategories(XMLFILE);
         } catch (TransformerException | ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
         }
@@ -66,27 +70,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        XMLOperations.Operations.readXMLRaw(xmlFile);
-        try {
-            XMLOperations.Operations.addTask(xmlFile,
-                    new Task("randomInfo", "15-9-2020", "Home", "TODO"));
-        } catch (ParserConfigurationException | IOException | SAXException | TransformerException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            XMLOperations.Operations.changeTask(xmlFile, "newrandInfo",
-                    "12-9-2020","Class", "TODO");
-        } catch (ParserConfigurationException | TransformerException | SAXException | IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            XMLOperations.Operations.deleteTask(xmlFile, "1");
-        } catch (ParserConfigurationException | IOException | SAXException | TransformerException e) {
-            e.printStackTrace();
-        }
     }
 
     private boolean existFile(String fileName){
@@ -102,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public File checkFile()
-            throws TransformerException, ParserConfigurationException, IOException, SAXException {
+            throws TransformerException, ParserConfigurationException {
         boolean isExist = existFile(FILENAME);
         File mainFile = new File(super.getFilesDir(), FILENAME);
         if (isExist) {
@@ -119,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alertDialog = warning.create();
             alertDialog.show();
             mainFile = XMLOperations.Operations.createXMLFile(super.getFilesDir(), FILENAME);
-            CATEGORIES = XMLOperations.Operations.getCategories(mainFile);
             return mainFile;
         }
         return mainFile;
@@ -131,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void showCategories(View view){
+    public void showCategories(View view)
+            throws IOException, SAXException, ParserConfigurationException {
         Intent intent = new Intent(this, TaskCategoriesActivity.class);
         intent.putExtra("TaskCategories", CATEGORIES);
         startActivity(intent);

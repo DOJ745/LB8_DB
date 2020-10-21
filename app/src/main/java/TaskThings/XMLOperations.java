@@ -70,18 +70,18 @@ public class XMLOperations {
             }
         }
 
-        public static ArrayList<String> getCategories(File readedXML)
+        public static String[] getCategories(File readedXML)
                 throws ParserConfigurationException, IOException, SAXException {
             DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
             DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
             Document doc = xmlBuilder.parse(readedXML);
             NodeList tasksNode = doc.getElementsByTagName("task");
-            ArrayList<String> categoryList = new ArrayList<>();
+            String[] categoryList = new String[5];
 
             for(int i = 0; i < tasksNode.getLength(); i++) {
                 Element task = (Element) tasksNode.item(i);
                 String taskCategory = task.getAttribute("category");
-                categoryList.add(taskCategory);
+                categoryList[i] = taskCategory;
             }
             return categoryList;
         }
