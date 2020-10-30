@@ -149,7 +149,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showXPath(View view){
-        //Intet intet = new Intent();
-        //startActivity(intet)
+        Intent intent = new Intent(this, XPathActivity.class);
+        startActivity(intent);
+    }
+
+    public void showXSLT(View view){
+        Intent intent = new Intent(this, XSLTActivity.class);
+        startActivity(intent);
     }
 }

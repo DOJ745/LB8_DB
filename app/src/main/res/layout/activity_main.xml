@@ -45,6 +45,13 @@
             android:onClick="showXPath"
             android:text="@string/text_XPath" />
 
+        <Button
+            android:id="@+id/showXSLT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="showXSLT"
+            android:text="@string/text_XSLT" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

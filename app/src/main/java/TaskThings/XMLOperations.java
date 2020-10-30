@@ -20,6 +20,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 public class XMLOperations {
     public static class Operations{
@@ -150,8 +156,40 @@ public class XMLOperations {
             return taskList;
         }
 
-        public static void createXPathFile(){
+        public static ArrayList<Task> findByXPath(File readedXML, String category)
+                throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+            DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
+            DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
+            Document doc = xmlBuilder.parse(readedXML);
 
+            XPathFactory xpf = XPathFactory.newInstance();
+            XPath xp = xpf.newXPath();
+
+            XPathExpression xpe = xp.compile("/Tasks/task[@category='" + category + "']");
+            NodeList nodes = (NodeList) xpe.evaluate(doc, XPathConstants.NODESET);
+            ArrayList<Task> taskList = new ArrayList<>();
+
+            for(int i = 0; i < nodes.getLength(); i++){
+                Task findedTask = new Task();
+                String taskInfo;
+                String taskDate;
+                Element task = (Element) nodes.item(i);
+                String taskName = task.getAttribute("id");
+                String taskCategory = task.getAttribute("category");
+
+                Node infoNode = task.getFirstChild();
+                Node dateNode = task.getLastChild();
+                taskInfo = infoNode.getTextContent();
+                taskDate = dateNode.getTextContent();
+
+                findedTask.setCategory(taskCategory);
+                findedTask.setDate(taskDate);
+                findedTask.setInfo(taskInfo);
+                findedTask.setName(taskName);
+
+                taskList.add(findedTask);
+            }
+            return taskList;
         }
 
         public static void addTask(File readedXML, Task newTask)

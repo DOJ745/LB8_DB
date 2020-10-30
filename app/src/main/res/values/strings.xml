@@ -4,8 +4,9 @@
     <string name="text_showTasks">Показать задачи</string>
     <string name="text_showCategories">Показать категории</string>
     <string name="text_XPath">XPath</string>
+    <string name="text_XSLT">XSLT</string>
     <string name="text_allCategories">Все категории</string>
-    
+
     <string name="text_name">Название</string>
     <string name="text_info">Информация</string>
     <string name="text_category">Категория</string>
