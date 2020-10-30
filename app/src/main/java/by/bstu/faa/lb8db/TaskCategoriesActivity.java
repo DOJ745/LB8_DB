@@ -35,7 +35,6 @@ public class TaskCategoriesActivity extends AppCompatActivity {
     private static final String LOG_FILE = "log_file";
     public static int MAX_CATEGORIES = 5;
     public static String FILENAME = "categories.json";
-    public static String XML_FILENAME = "LB8.xml";
     public static File XMLFILE;
     public static int CHOOSED_POS = 0;
 
@@ -54,13 +53,7 @@ public class TaskCategoriesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_categories);
 
-        File xmlFile = null;
-        try {
-            xmlFile = checkFile();
-            XMLFILE = xmlFile;
-        } catch (TransformerException | ParserConfigurationException e) {
-            e.printStackTrace();
-        }
+        XMLFILE = new File(super.getFilesDir(), "LB8.xml");
 
         listView = findViewById(R.id.categoryList);
         editCategory = findViewById(R.id.editCategory);
@@ -107,41 +100,6 @@ public class TaskCategoriesActivity extends AppCompatActivity {
         ArrayList<String> readCategories = JSONOperations.Operations.readString(
                 new File(super.getFilesDir(), FILENAME));
         return  readCategories;
-    }
-
-    private boolean existFile(String fileName){
-        boolean flag;
-        File checkFile = new File(super.getFilesDir(), fileName);
-        if(flag = checkFile.exists()){
-            Log.d("log_file_ex", "File " + fileName + " exist");
-        }
-        else{
-            Log.d("log_file_ex", "File " + fileName + " not found");
-        }
-        return flag;
-    }
-
-    private File checkFile()
-            throws TransformerException, ParserConfigurationException {
-        boolean isExist = existFile(XML_FILENAME);
-        File mainFile = new File(super.getFilesDir(), XML_FILENAME);
-        if (isExist) {
-            Log.d(LOG_FILE, "File " + XML_FILENAME + " is already exist!");
-        } else {
-            AlertDialog.Builder warning = new AlertDialog.Builder(this);
-            warning.setTitle("Creating file " + XML_FILENAME).setPositiveButton("OK",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Log.d(LOG_FILE, "Creating file " + XML_FILENAME);
-                        }
-                    });
-            AlertDialog alertDialog = warning.create();
-            alertDialog.show();
-            mainFile = XMLOperations.Operations.createXMLFile(super.getFilesDir(), XML_FILENAME);
-            return mainFile;
-        }
-        return mainFile;
     }
 
     public void addCategory(View view) throws IOException {
