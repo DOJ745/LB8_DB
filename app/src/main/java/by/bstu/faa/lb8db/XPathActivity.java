@@ -24,7 +24,6 @@ import TaskThings.XMLOperations;
 public class XPathActivity extends AppCompatActivity {
     public static File XMLFILE;
 
-    ArrayList<String> stringTasks = new ArrayList<>();
     EditText editCategory;
     ListView listView;
     ArrayAdapter<String> adapter;
@@ -44,9 +43,13 @@ public class XPathActivity extends AppCompatActivity {
             throws ParserConfigurationException, SAXException,
             XPathExpressionException, IOException {
         ArrayList<Task> findedTasks;
+        ArrayList<String> stringTasks = new ArrayList<>();
         if(editCategory.getText().toString().length() > 0){
             findedTasks = XMLOperations.Operations.findByXPath(XMLFILE, editCategory.getText().toString());
-            if(findedTasks.size() == 0){
+            for(int i = 0; i < findedTasks.size(); i++){
+                stringTasks.add(findedTasks.get(i).toString());
+            }
+            if(stringTasks.size() <= 0){
                 ArrayList empty = new ArrayList<String>();
                 empty.add("None");
                 adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, empty);
@@ -54,11 +57,12 @@ public class XPathActivity extends AppCompatActivity {
                 Toast toast = Toast.makeText(getApplicationContext(), "Ничего не найдено!", Toast.LENGTH_SHORT);
                 toast.show();
             }
-            for(int i = 0; i < findedTasks.size(); i++){
-                stringTasks.add(findedTasks.get(i).toString());
-            }
             adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, stringTasks);
             listView.setAdapter(adapter);
+        }
+        else{
+            Toast toast = Toast.makeText(getApplicationContext(), "Вы ничего не ввели!", Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
 }
