@@ -3,6 +3,7 @@
     <string name="text_pickedDate">Выбранная дата</string>
     <string name="text_showTasks">Показать задачи</string>
     <string name="text_showCategories">Показать категории</string>
+    <string name="text_XPath">XPath</string>
     <string name="text_allCategories">Все категории</string>
     
     <string name="text_name">Название</string>

@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.xml.sax.SAXException;
 
@@ -68,10 +69,12 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     TASKS = XMLOperations.Operations.getDateTasks(finalXmlFile, PICKED_DATE);
                     if(TASKS.size() == 0){
-                        showTasks.setEnabled(false);
+                        Toast toast = Toast.makeText(getApplicationContext(), "Задач на эту дату нет", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
-                    else {
-                        showTasks.setEnabled(true);
+                    else{
+                        Toast toast = Toast.makeText(getApplicationContext(), "Задачи обнаружены", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 } catch (ParserConfigurationException | IOException | SAXException e) {
                     e.printStackTrace();
@@ -143,5 +146,10 @@ public class MainActivity extends AppCompatActivity {
     public void showCategories(View view) {
         Intent intent = new Intent(this, TaskCategoriesActivity.class);
         startActivity(intent);
+    }
+
+    public void showXPath(View view){
+        //Intet intet = new Intent();
+        //startActivity(intet)
     }
 }

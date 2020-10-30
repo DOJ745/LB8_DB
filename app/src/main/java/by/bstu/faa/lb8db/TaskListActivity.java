@@ -65,7 +65,6 @@ public class TaskListActivity extends AppCompatActivity {
         updateButton = findViewById(R.id.updateButton);
         deleteButton = findViewById(R.id.deleteButton);
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stingsTasks);
         categoriesAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item,
                 JSONOperations.Operations.readString(new File(super.getFilesDir(), CATEGORIES)));
@@ -85,6 +84,7 @@ public class TaskListActivity extends AppCompatActivity {
         editCategory.setOnItemSelectedListener(itemSelectedListener);
         editCategory.setAdapter(categoriesAdapter);
 
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stingsTasks);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
@@ -165,10 +165,12 @@ public class TaskListActivity extends AppCompatActivity {
             newTask.setCategory(CHOOSED_CATEGORY);
 
             stingsTasks.remove(CHOOSED_TASK);
+            CurrentTasks.remove(CHOOSED_TASK);
 
             XMLOperations.Operations.changeTask(XMLFILE, oldId,
                     editInfo.getText().toString(), CHOOSED_CATEGORY, editName.getText().toString());
             stingsTasks.add(newTask.toString());
+            CurrentTasks.add(newTask);
             adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stingsTasks);
             listView.setAdapter(adapter);
             Toast toast = Toast.makeText(getApplicationContext(), "Задача успешно изменена!", Toast.LENGTH_LONG);
@@ -180,7 +182,16 @@ public class TaskListActivity extends AppCompatActivity {
         }
     }
 
-    public void deleteTask(View view){
+    public void deleteTask(View view)
+            throws ParserConfigurationException, TransformerException, SAXException, IOException {
+        String oldId = CurrentTasks.get(CHOOSED_TASK).getId();
+        stingsTasks.remove(CHOOSED_TASK);
+        CurrentTasks.remove(CHOOSED_TASK);
+        XMLOperations.Operations.deleteTask(XMLFILE, oldId);
 
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stingsTasks);
+        listView.setAdapter(adapter);
+        Toast toast = Toast.makeText(getApplicationContext(), "Задача успешно удалена!", Toast.LENGTH_LONG);
+        toast.show();
     }
 }

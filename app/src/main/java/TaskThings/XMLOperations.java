@@ -150,6 +150,10 @@ public class XMLOperations {
             return taskList;
         }
 
+        public static void createXPathFile(){
+
+        }
+
         public static void addTask(File readedXML, Task newTask)
                 throws ParserConfigurationException, IOException, SAXException, TransformerException {
             DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();

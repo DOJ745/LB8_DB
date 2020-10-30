@@ -38,6 +38,13 @@
             android:onClick="showCategories"
             android:text="@string/text_showCategories" />
 
+        <Button
+            android:id="@+id/showXPath"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="showXPath"
+            android:text="@string/text_XPath" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
