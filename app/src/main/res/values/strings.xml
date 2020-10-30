@@ -4,4 +4,10 @@
     <string name="text_showTasks">Показать задачи</string>
     <string name="text_showCategories">Показать категории</string>
     <string name="text_allCategories">Все категории</string>
+
+    <string name="text_enterCategory">Введите категорию:</string>
+
+    <string name="text_add">Добавить</string>
+    <string name="text_update">Изменить</string>
+    <string name="text_delete">Удалить</string>
 </resources>

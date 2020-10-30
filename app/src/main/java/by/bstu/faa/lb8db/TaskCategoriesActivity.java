@@ -8,17 +8,26 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import TaskThings.JSONOperations;
 import TaskThings.Task;
 
 public class TaskCategoriesActivity extends AppCompatActivity {
 
     ListView listView;
-    ArrayList<String> CategoriesOperations = new ArrayList<>();
+    EditText editCategory;
+    Button addButton;
+    Button updateButton;
+    Button deleteButton;
+
+    ArrayList<String> Categories = new ArrayList<>();
     ArrayList<String> selectedCategories = new ArrayList<>();
     ArrayAdapter<String> adapter;
 
@@ -28,9 +37,14 @@ public class TaskCategoriesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task_categories);
 
         listView = findViewById(R.id.categoryList);
-        initCategories();
+        editCategory = findViewById(R.id.editCategory);
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, CategoriesOperations);
+        addButton = findViewById(R.id.addButton);
+        updateButton = findViewById(R.id.updateButton);
+        deleteButton = findViewById(R.id.deleteButton);
+        Categories = initCategories();
+
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, Categories);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
@@ -40,27 +54,31 @@ public class TaskCategoriesActivity extends AppCompatActivity {
                 String selectedCategory = adapter.getItem(position);
                 if(listView.isItemChecked(position)){
                     selectedCategories.add(selectedCategory);
+                    addButton.setEnabled(false);
                 }
                 else{
                     selectedCategories.remove(selectedCategory);
+                    addButton.setEnabled(true);
                 }
             }
         });
     }
 
-    private void initCategories(){
-        Bundle arguments = getIntent().getExtras();
-        String[] categories;
-        try{
-            categories = (String[]) arguments.get("TaskCategories");
-            for(int i = 0; i < categories.length; i++){
-                if(categories[i] != null){
-                    CategoriesOperations.add(categories[i]);
-                }
-            }
-        }
-        catch (NullPointerException e){
-            Log.e("log_intent", "Categories not initialized!");
-        }
+    private ArrayList<String> initCategories(){
+        ArrayList<String> readCategories = JSONOperations.Operations.readString(
+                new File(super.getFilesDir(), "categories.json"));
+        return  readCategories;
+    }
+
+    public void addCategory(View view){
+
+    }
+
+    public void updateCategory(View view){
+
+    }
+
+    public void deleteCategory(View view){
+
     }
 }

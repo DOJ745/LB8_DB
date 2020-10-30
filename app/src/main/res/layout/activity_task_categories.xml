@@ -15,6 +15,21 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/text_enterCategory"
+            android:textColor="@color/colorBlack"
+            android:textSize="10pt"
+            android:padding="10dp"/>
+
+        <EditText
+            android:id="@+id/editCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10pt"
+            android:padding="10dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/text_allCategories"
             android:textAlignment="center"
             android:textColor="@color/colorBlack"
@@ -25,6 +40,27 @@
             android:id="@+id/categoryList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+        <Button
+            android:id="@+id/addButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_add"
+            android:onClick="addCategory" />
+
+        <Button
+            android:id="@+id/updateButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_update"
+            android:onClick="updateCategory" />
+
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_delete"
+            android:onClick="deleteCategory" />
 
     </LinearLayout>
 

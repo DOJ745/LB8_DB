@@ -20,21 +20,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import TaskThings.JSONOperations;
 import TaskThings.Task;
 import TaskThings.XMLOperations;
 
 public class MainActivity extends AppCompatActivity {
-    // public static int MAX_TASKS = 20;
-   // public static int MAX_CATEGORIES = 5;
     public static String LOG_FILE = "log_file";
     public static String LOG_TASK = "log_task";
 
     public static String FILENAME = "LB8.xml";
+    public static String FILE_CATEGORIES = "categories.json";
     public static File XMLFILE;
     public static String PICKED_DATE;
 
     public static ArrayList<Task> TASKS = new ArrayList<>();
-    String[] CATEGORIES;
 
     TextView pickedDate;
     CalendarView calendarView;
@@ -47,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
         File xmlFile = null;
         try {
             xmlFile = checkFile();
+            createFileCategories(FILE_CATEGORIES);
             XMLFILE = xmlFile;
-            CATEGORIES = XMLOperations.Operations.getCategories(XMLFILE);
-        } catch (TransformerException | ParserConfigurationException | IOException | SAXException e) {
+        } catch (TransformerException | ParserConfigurationException | IOException e) {
             e.printStackTrace();
         }
 
@@ -107,6 +106,25 @@ public class MainActivity extends AppCompatActivity {
         return mainFile;
     }
 
+    public void createFileCategories(String filename) throws IOException {
+        boolean isExist = existFile(FILE_CATEGORIES);
+        if (isExist) {
+            Log.d(LOG_FILE, "File " + FILE_CATEGORIES + " is already exist!");
+        } else {
+            AlertDialog.Builder warning = new AlertDialog.Builder(this);
+            warning.setTitle("Creating file " + FILE_CATEGORIES).setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Log.d(LOG_FILE, "Creating file " + FILE_CATEGORIES);
+                        }
+                    });
+            AlertDialog alertDialog = warning.create();
+            alertDialog.show();
+            JSONOperations.Operations.createCategory(FILE_CATEGORIES, super.getFilesDir());
+        }
+    }
+
     public void showTasks(View view){
         Intent intent = new Intent(this, TaskListActivity.class);
         intent.putExtra("TaskList", TASKS);
@@ -115,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void showCategories(View view) {
         Intent intent = new Intent(this, TaskCategoriesActivity.class);
-        intent.putExtra("TaskCategories", CATEGORIES);
         startActivity(intent);
     }
 }

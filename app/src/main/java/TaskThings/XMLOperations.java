@@ -36,8 +36,8 @@ public class XMLOperations {
             // Task elements
             Element task = doc.createElement("task");
             rootElement.appendChild(task);
-            task.setAttribute("category", "study");
-            task.setAttribute("id", "1");
+            task.setAttribute("category", "Study");
+            task.setAttribute("id", "test");
 
             // Info elements
             Element info = doc.createElement("info");
