@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.xml.sax.SAXException;
 
@@ -26,8 +27,10 @@ import TaskThings.Task;
 import TaskThings.XMLOperations;
 
 public class TaskListActivity extends AppCompatActivity {
+    public static int MAX_TASKS = 5;
     public static String CATEGORIES = "categories.json";
     public static String CHOOSED_CATEGORY;
+    public static int CHOOSED_TASK;
     public static File XMLFILE;
 
     ArrayList<Task> CurrentTasks = new ArrayList<>();
@@ -80,8 +83,8 @@ public class TaskListActivity extends AppCompatActivity {
             }
         };
         editCategory.setOnItemSelectedListener(itemSelectedListener);
-
         editCategory.setAdapter(categoriesAdapter);
+
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
@@ -90,6 +93,7 @@ public class TaskListActivity extends AppCompatActivity {
                 String selectedTask = adapter.getItem(position);
                 if(listView.isItemChecked(position)){
                     selectedTasks.add(selectedTask);
+                    CHOOSED_TASK = position;
 
                     addButton.setEnabled(false);
                     deleteButton.setEnabled(true);
@@ -135,11 +139,45 @@ public class TaskListActivity extends AppCompatActivity {
             newTask.setCategory(CHOOSED_CATEGORY);
         }
         newTask.setDate(CurrentTasks.get(0).getDate());
+
+        if(stingsTasks.size() < MAX_TASKS){
+            stingsTasks.add(newTask.toString());
+        }
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stingsTasks);
+        listView.setAdapter(adapter);
         XMLOperations.Operations.addTask(XMLFILE, newTask);
+
+        Toast toast = Toast.makeText(getApplicationContext(), "Задача успешно добавлена!", Toast.LENGTH_LONG);
+        toast.show();
     }
 
-    public void updateTask(View view){
+    public void updateTask(View view)
+            throws ParserConfigurationException, TransformerException, SAXException, IOException {
+        String oldId = CurrentTasks.get(CHOOSED_TASK).getId();
 
+        if(editInfo.getText().toString().length() > 0 &&
+                editName.getText().toString().length() > 0){
+
+            Task newTask = new Task();
+            newTask.setName(editName.getText().toString());
+            newTask.setInfo(editInfo.getText().toString());
+            newTask.setDate(CurrentTasks.get(0).getDate());
+            newTask.setCategory(CHOOSED_CATEGORY);
+
+            stingsTasks.remove(CHOOSED_TASK);
+
+            XMLOperations.Operations.changeTask(XMLFILE, oldId,
+                    editInfo.getText().toString(), CHOOSED_CATEGORY, editName.getText().toString());
+            stingsTasks.add(newTask.toString());
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stingsTasks);
+            listView.setAdapter(adapter);
+            Toast toast = Toast.makeText(getApplicationContext(), "Задача успешно изменена!", Toast.LENGTH_LONG);
+            toast.show();
+        }
+        else{
+            Toast toast = Toast.makeText(getApplicationContext(), "Данные не введены!", Toast.LENGTH_LONG);
+            toast.show();
+        }
     }
 
     public void deleteTask(View view){

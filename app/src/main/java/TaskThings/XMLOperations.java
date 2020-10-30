@@ -175,21 +175,20 @@ public class XMLOperations {
             readXMLRaw(readedXML);
         }
 
-        public static void changeTask(File readedXML, String newInfo,
-                                      String newDate, String newCategory, String id)
+        public static void changeTask(File readedXML, String oldId,
+                                      String newInfo, String newCategory, String newId)
                 throws ParserConfigurationException, IOException, SAXException, TransformerException {
             DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
             DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
             Document doc = xmlBuilder.parse(readedXML);
 
-            Element task = doc.getElementById(id);
+            Element task = doc.getElementById(oldId);
 
             if(newCategory != null){ task.setAttribute("category", newCategory); }
             Node taskInfo = task.getFirstChild();
-            Node taskDate = task.getLastChild();
 
             if(newInfo != null){ taskInfo.setTextContent(newInfo); }
-            if(newDate != null){ taskDate.setTextContent(newDate); }
+            if(newId != null){ task.setAttribute("id", newId); }
 
             saveChanges(doc, readedXML);
             Log.e("log_file", "Task changed successfully!");
