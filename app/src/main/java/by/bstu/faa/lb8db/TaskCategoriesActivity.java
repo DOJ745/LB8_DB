@@ -1,7 +1,9 @@
 package by.bstu.faa.lb8db;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,19 +16,27 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.xml.sax.SAXException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.xml.datatype.Duration;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import TaskThings.JSONOperations;
 import TaskThings.Task;
+import TaskThings.XMLOperations;
 
 public class TaskCategoriesActivity extends AppCompatActivity {
 
+    private static final String LOG_FILE = "log_file";
     public static int MAX_CATEGORIES = 5;
     public static String FILENAME = "categories.json";
+    public static String XML_FILENAME = "LB8.xml";
+    public static File XMLFILE;
     public static int CHOOSED_POS = 0;
 
     ListView listView;
@@ -44,12 +54,21 @@ public class TaskCategoriesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_categories);
 
+        File xmlFile = null;
+        try {
+            xmlFile = checkFile();
+            XMLFILE = xmlFile;
+        } catch (TransformerException | ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+
         listView = findViewById(R.id.categoryList);
         editCategory = findViewById(R.id.editCategory);
 
         addButton = findViewById(R.id.addButton);
         updateButton = findViewById(R.id.updateButton);
         deleteButton = findViewById(R.id.deleteButton);
+
         Categories = initCategories();
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, Categories);
@@ -90,6 +109,41 @@ public class TaskCategoriesActivity extends AppCompatActivity {
         return  readCategories;
     }
 
+    private boolean existFile(String fileName){
+        boolean flag;
+        File checkFile = new File(super.getFilesDir(), fileName);
+        if(flag = checkFile.exists()){
+            Log.d("log_file_ex", "File " + fileName + " exist");
+        }
+        else{
+            Log.d("log_file_ex", "File " + fileName + " not found");
+        }
+        return flag;
+    }
+
+    private File checkFile()
+            throws TransformerException, ParserConfigurationException {
+        boolean isExist = existFile(XML_FILENAME);
+        File mainFile = new File(super.getFilesDir(), XML_FILENAME);
+        if (isExist) {
+            Log.d(LOG_FILE, "File " + XML_FILENAME + " is already exist!");
+        } else {
+            AlertDialog.Builder warning = new AlertDialog.Builder(this);
+            warning.setTitle("Creating file " + XML_FILENAME).setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Log.d(LOG_FILE, "Creating file " + XML_FILENAME);
+                        }
+                    });
+            AlertDialog alertDialog = warning.create();
+            alertDialog.show();
+            mainFile = XMLOperations.Operations.createXMLFile(super.getFilesDir(), XML_FILENAME);
+            return mainFile;
+        }
+        return mainFile;
+    }
+
     public void addCategory(View view) throws IOException {
         if(editCategory.getText().toString().length() > 0 && Categories.size() < MAX_CATEGORIES){
             Categories.add(editCategory.getText().toString());
@@ -108,8 +162,13 @@ public class TaskCategoriesActivity extends AppCompatActivity {
         }
     }
 
-    public void updateCategory(View view) throws IOException {
+    public void updateCategory(View view)
+            throws IOException, ParserConfigurationException, SAXException, TransformerException {
         if(editCategory.getText().toString().length() > 0 && Categories.size() < MAX_CATEGORIES){
+
+            XMLOperations.Operations.updateTasksCategory(
+                    XMLFILE, adapter.getItem(CHOOSED_POS), editCategory.getText().toString());
+
             Categories.remove(adapter.getItem(CHOOSED_POS));
             Categories.add(editCategory.getText().toString());
             JSONOperations.Operations.saveString(Categories, FILENAME, super.getFilesDir());
@@ -127,9 +186,12 @@ public class TaskCategoriesActivity extends AppCompatActivity {
         }
     }
 
-    public void deleteCategory(View view) throws IOException {
+    public void deleteCategory(View view)
+            throws IOException, ParserConfigurationException, SAXException, TransformerException {
+        XMLOperations.Operations.deleteTasksCategory(XMLFILE, adapter.getItem(CHOOSED_POS));
         Categories.remove(adapter.getItem(CHOOSED_POS));
         JSONOperations.Operations.saveString(Categories, FILENAME, super.getFilesDir());
+
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, Categories);
         listView.setAdapter(adapter);
         Toast toast = Toast.makeText(getApplicationContext(), "Категория была удалена!", Toast.LENGTH_SHORT);

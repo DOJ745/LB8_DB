@@ -4,11 +4,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <ListView
-        android:id="@+id/taskList"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:choiceMode="singleChoice"
-        android:padding="10dp"/>
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/taskList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:choiceMode="singleChoice"
+            android:padding="10dp"/>
+
+
+    </ScrollView>
 
 </LinearLayout>

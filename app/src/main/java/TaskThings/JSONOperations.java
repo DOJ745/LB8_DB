@@ -31,7 +31,7 @@ public class JSONOperations {
 
         public static void createCategory(String fileName, File filePath) throws IOException {
             ArrayList<String> arr = new ArrayList<>();
-            arr.add("Study");
+            arr.add("study");
             saveString(arr, fileName, filePath);
         }
     }

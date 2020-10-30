@@ -36,7 +36,7 @@ public class XMLOperations {
             // Task elements
             Element task = doc.createElement("task");
             rootElement.appendChild(task);
-            task.setAttribute("category", "Study");
+            task.setAttribute("category", "study");
             task.setAttribute("id", "test");
 
             // Info elements
@@ -85,6 +85,39 @@ public class XMLOperations {
             }
             return categoryList;
         }
+
+        public static void deleteTasksCategory(File readedXML, String oldCategory)
+                throws ParserConfigurationException, IOException, SAXException, TransformerException {
+            DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
+            DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
+            Document doc = xmlBuilder.parse(readedXML);
+            NodeList tasksNode = doc.getElementsByTagName("task");
+
+            for(int i = 0; i < tasksNode.getLength(); i++){
+                Element task = (Element) tasksNode.item(i);
+                if(task.getAttribute("category").equals(oldCategory)){
+                    task.setAttribute("category", "empty");
+                }
+            }
+            saveChanges(doc, readedXML);
+        }
+
+        public static void updateTasksCategory(File readedXML, String oldCategory, String newCategory)
+                throws ParserConfigurationException, IOException, SAXException, TransformerException {
+            DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
+            DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
+            Document doc = xmlBuilder.parse(readedXML);
+            NodeList tasksNode = doc.getElementsByTagName("task");
+
+            for(int i = 0; i < tasksNode.getLength(); i++){
+                Element task = (Element) tasksNode.item(i);
+                if(task.getAttribute("category").equals(oldCategory)){
+                    task.setAttribute("category", newCategory);
+                }
+            }
+            saveChanges(doc, readedXML);
+        }
+
 
         public static ArrayList<Task> getDateTasks(File readedXML, String currentDate)
                 throws ParserConfigurationException, IOException, SAXException {

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.TextView;
 
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView pickedDate;
     CalendarView calendarView;
+    Button showTasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         pickedDate = findViewById(R.id.pickedDate);
         calendarView = findViewById(R.id.calendarView);
+        showTasks = findViewById(R.id.showTasks);
 
         final File finalXmlFile = xmlFile;
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
@@ -64,6 +67,12 @@ public class MainActivity extends AppCompatActivity {
                 PICKED_DATE = pickedDate.getText().toString();
                 try {
                     TASKS = XMLOperations.Operations.getDateTasks(finalXmlFile, PICKED_DATE);
+                    if(TASKS.size() == 0){
+                        showTasks.setEnabled(false);
+                    }
+                    else {
+                        showTasks.setEnabled(true);
+                    }
                 } catch (ParserConfigurationException | IOException | SAXException e) {
                     e.printStackTrace();
                 }
