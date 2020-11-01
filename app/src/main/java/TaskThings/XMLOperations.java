@@ -39,10 +39,14 @@ public class XMLOperations {
             Element rootElement = doc.createElement("Tasks");
             doc.appendChild(rootElement);
 
+            // Group element
+            Element group = doc.createElement("Group");
+            rootElement.appendChild(group);
+            group.setAttribute("name", "study");
+
             // Task elements
             Element task = doc.createElement("task");
-            rootElement.appendChild(task);
-            task.setAttribute("category", "study");
+            group.appendChild(task);
             task.setAttribute("id", "test");
 
             // Info elements
