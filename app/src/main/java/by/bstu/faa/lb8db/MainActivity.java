@@ -154,11 +154,12 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void showXSLT(View view) throws IOException {
-        Intent intent = new Intent(this, XSLTActivity.class);
+    public void showXSLT(View view) throws IOException, TransformerException {
         if (PICKED_DATE != null) {
             XMLOperations.Operations.createXSLT(super.getFilesDir(), PICKED_DATE);
-            startActivity(intent);
+            XMLOperations.Operations.resultXSLT("LB8.xml", "form.xslt", super.getFilesDir());
+            Toast toast = Toast.makeText(getApplicationContext(), "Результат в файле result.txt", Toast.LENGTH_SHORT);
+            toast.show();
         }
         else{
             Toast toast = Toast.makeText(getApplicationContext(), "Выберите дату!", Toast.LENGTH_SHORT);
