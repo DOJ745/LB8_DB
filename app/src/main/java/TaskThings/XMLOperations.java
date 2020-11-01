@@ -80,49 +80,33 @@ public class XMLOperations {
             }
         }
 
-        public static String[] getCategories(File readedXML)
-                throws ParserConfigurationException, IOException, SAXException {
-            DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
-            DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
-            Document doc = xmlBuilder.parse(readedXML);
-            NodeList tasksNode = doc.getElementsByTagName("task");
-            String[] categoryList = new String[5];
-
-            for(int i = 0; i < tasksNode.getLength(); i++) {
-                Element task = (Element) tasksNode.item(i);
-                String taskCategory = task.getAttribute("category");
-                categoryList[i] = taskCategory;
-            }
-            return categoryList;
-        }
-
-        public static void deleteTasksCategory(File readedXML, String oldCategory)
+        public static void deleteCategory(File readedXML, String Category)
                 throws ParserConfigurationException, IOException, SAXException, TransformerException {
             DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
             DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
             Document doc = xmlBuilder.parse(readedXML);
-            NodeList tasksNode = doc.getElementsByTagName("task");
+            NodeList groups = doc.getElementsByTagName("Group");
 
-            for(int i = 0; i < tasksNode.getLength(); i++){
-                Element task = (Element) tasksNode.item(i);
-                if(task.getAttribute("category").equals(oldCategory)){
-                    task.setAttribute("category", "empty");
+            for(int i = 0; i < groups.getLength(); i++){
+                Element group = (Element) groups.item(i);
+                if(group.getAttribute("name").equals(Category)){
+                    group.getParentNode().removeChild(group);
                 }
             }
             saveChanges(doc, readedXML);
         }
 
-        public static void updateTasksCategory(File readedXML, String oldCategory, String newCategory)
+        public static void updateCategory(File readedXML, String oldCategory, String newCategory)
                 throws ParserConfigurationException, IOException, SAXException, TransformerException {
             DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
             DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
             Document doc = xmlBuilder.parse(readedXML);
-            NodeList tasksNode = doc.getElementsByTagName("task");
+            NodeList groups = doc.getElementsByTagName("Group");
 
-            for(int i = 0; i < tasksNode.getLength(); i++){
-                Element task = (Element) tasksNode.item(i);
-                if(task.getAttribute("category").equals(oldCategory)){
-                    task.setAttribute("category", newCategory);
+            for(int i = 0; i < groups.getLength(); i++){
+                Element group = (Element) groups.item(i);
+                if(oldCategory.equals(group.getAttribute("name"))){
+                    group.setAttribute("name", newCategory);
                 }
             }
             saveChanges(doc, readedXML);
@@ -143,14 +127,12 @@ public class XMLOperations {
                 String taskDate;
                 Element task = (Element) tasksNode.item(i);
                 String taskName = task.getAttribute("id");
-                String taskCategory = task.getAttribute("category");
 
                 Node infoNode = task.getFirstChild();
                 Node dateNode = task.getLastChild();
                 taskInfo = infoNode.getTextContent();
                 taskDate = dateNode.getTextContent();
 
-                findedTask.setCategory(taskCategory);
                 findedTask.setDate(taskDate);
                 findedTask.setInfo(taskInfo);
                 findedTask.setName(taskName);
@@ -169,7 +151,7 @@ public class XMLOperations {
             XPathFactory xpf = XPathFactory.newInstance();
             XPath xp = xpf.newXPath();
 
-            XPathExpression xpe = xp.compile("/Tasks/task[@category='" + category + "']");
+            XPathExpression xpe = xp.compile("/Tasks/Group[@name='" + category + "']");
             NodeList nodes = (NodeList) xpe.evaluate(doc, XPathConstants.NODESET);
             ArrayList<Task> taskList = new ArrayList<>();
 
@@ -179,14 +161,13 @@ public class XMLOperations {
                 String taskDate;
                 Element task = (Element) nodes.item(i);
                 String taskName = task.getAttribute("id");
-                String taskCategory = task.getAttribute("category");
 
                 Node infoNode = task.getFirstChild();
                 Node dateNode = task.getLastChild();
                 taskInfo = infoNode.getTextContent();
                 taskDate = dateNode.getTextContent();
 
-                findedTask.setCategory(taskCategory);
+                findedTask.setCategory(category);
                 findedTask.setDate(taskDate);
                 findedTask.setInfo(taskInfo);
                 findedTask.setName(taskName);
@@ -234,7 +215,10 @@ public class XMLOperations {
 
             Element task = doc.getElementById(oldId);
 
-            if(newCategory != null){ task.setAttribute("category", newCategory); }
+            if(newCategory != null)
+            {
+                task.setAttribute("category", newCategory);
+            }
             Node taskInfo = task.getFirstChild();
 
             if(newInfo != null){ taskInfo.setTextContent(newInfo); }
@@ -242,7 +226,6 @@ public class XMLOperations {
 
             saveChanges(doc, readedXML);
             Log.e("log_file", "Task changed successfully!");
-            readXMLRaw(readedXML);
         }
 
         public static void deleteTask(File readedXML, String id) throws ParserConfigurationException, IOException,
@@ -250,17 +233,14 @@ public class XMLOperations {
             DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
             DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
             Document doc = xmlBuilder.parse(readedXML);
-            NodeList tasks = doc.getElementsByTagName("task");
 
-            for(int i = 0; i < tasks.getLength(); i++){
-                Element task = (Element) tasks.item(i);
-                String checkId = task.getAttribute("id");
+            Element task = doc.getElementById(id);
+            String checkId = task.getAttribute("id");
                 if(id.equals(checkId)){
                     task.getParentNode().removeChild(task);
                     saveChanges(doc, readedXML);
                     Log.e("log_file", "Task deleted successfully!");
-                }
-            }
+               }
         }
 
         private static void saveChanges(Document doc, File XML) throws TransformerException {

@@ -1,19 +1,14 @@
 package by.bstu.faa.lb8db;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.xml.sax.SAXException;
@@ -22,12 +17,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.xml.datatype.Duration;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import TaskThings.JSONOperations;
-import TaskThings.Task;
 import TaskThings.XMLOperations;
 
 public class TaskCategoriesActivity extends AppCompatActivity {
@@ -124,7 +117,7 @@ public class TaskCategoriesActivity extends AppCompatActivity {
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
         if(editCategory.getText().toString().length() > 0 && Categories.size() < MAX_CATEGORIES){
 
-            XMLOperations.Operations.updateTasksCategory(
+            XMLOperations.Operations.updateCategory(
                     XMLFILE, adapter.getItem(CHOOSED_POS), editCategory.getText().toString());
 
             Categories.remove(adapter.getItem(CHOOSED_POS));
@@ -146,7 +139,7 @@ public class TaskCategoriesActivity extends AppCompatActivity {
 
     public void deleteCategory(View view)
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        XMLOperations.Operations.deleteTasksCategory(XMLFILE, adapter.getItem(CHOOSED_POS));
+        XMLOperations.Operations.deleteCategory(XMLFILE, adapter.getItem(CHOOSED_POS));
         Categories.remove(adapter.getItem(CHOOSED_POS));
         JSONOperations.Operations.saveString(Categories, FILENAME, super.getFilesDir());
 
