@@ -35,7 +35,7 @@ public class TaskListActivity extends AppCompatActivity {
     public static String CURRENT_DATE;
 
     ArrayList<Task> CurrentTasks = new ArrayList<>();
-    ArrayList<String> stingsTasks = new ArrayList<>();
+    ArrayList<String> stringTasks = new ArrayList<>();
     ArrayList<String> selectedTasks = new ArrayList<>();
     ArrayAdapter<String> adapter;
     ArrayAdapter<String> categoriesAdapter;
@@ -54,7 +54,7 @@ public class TaskListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_list);
         initTasks();
-        initStringTasks(stingsTasks);
+        initStringTasks();
         XMLFILE = new File(super.getFilesDir(), "LB8.xml");
 
         listView = findViewById(R.id.taskList);
@@ -85,7 +85,7 @@ public class TaskListActivity extends AppCompatActivity {
         editCategory.setOnItemSelectedListener(itemSelectedListener);
         editCategory.setAdapter(categoriesAdapter);
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stingsTasks);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stringTasks);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
@@ -121,9 +121,9 @@ public class TaskListActivity extends AppCompatActivity {
         }
     }
 
-    private void initStringTasks(ArrayList<String> tasks){
+    private void initStringTasks(){
         for(int i = 0; i < CurrentTasks.size(); i++){
-           tasks.add(CurrentTasks.get(i).toString());
+            stringTasks.add(CurrentTasks.get(i).toString());
         }
     }
 
@@ -142,10 +142,10 @@ public class TaskListActivity extends AppCompatActivity {
         }
         newTask.setDate(CURRENT_DATE);
 
-        if(stingsTasks.size() < MAX_TASKS){
-            stingsTasks.add(newTask.toString());
+        if(stringTasks.size() < MAX_TASKS){
+            stringTasks.add(newTask.toString());
         }
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stingsTasks);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stringTasks);
         listView.setAdapter(adapter);
         XMLOperations.Operations.addTask(XMLFILE, newTask);
 
@@ -166,14 +166,14 @@ public class TaskListActivity extends AppCompatActivity {
             newTask.setDate(CurrentTasks.get(0).getDate());
             newTask.setCategory(CHOOSED_CATEGORY);
 
-            stingsTasks.remove(CHOOSED_TASK);
+            stringTasks.remove(CHOOSED_TASK);
             CurrentTasks.remove(CHOOSED_TASK);
 
             XMLOperations.Operations.changeTask(XMLFILE, oldId,
                     editInfo.getText().toString(), CHOOSED_CATEGORY, editName.getText().toString());
-            stingsTasks.add(newTask.toString());
+            stringTasks.add(newTask.toString());
             CurrentTasks.add(newTask);
-            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stingsTasks);
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stringTasks);
             listView.setAdapter(adapter);
             Toast toast = Toast.makeText(getApplicationContext(), "Задача успешно изменена!", Toast.LENGTH_LONG);
             toast.show();
@@ -187,11 +187,11 @@ public class TaskListActivity extends AppCompatActivity {
     public void deleteTask(View view)
             throws ParserConfigurationException, TransformerException, SAXException, IOException {
         String oldId = CurrentTasks.get(CHOOSED_TASK).getId();
-        stingsTasks.remove(CHOOSED_TASK);
+        stringTasks.remove(CHOOSED_TASK);
         CurrentTasks.remove(CHOOSED_TASK);
         XMLOperations.Operations.deleteTask(XMLFILE, oldId);
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stingsTasks);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, stringTasks);
         listView.setAdapter(adapter);
         Toast toast = Toast.makeText(getApplicationContext(), "Задача успешно удалена!", Toast.LENGTH_LONG);
         toast.show();

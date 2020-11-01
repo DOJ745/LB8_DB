@@ -80,19 +80,15 @@ public class XMLOperations {
             }
         }
 
-        public static void deleteCategory(File readedXML, String Category)
+        public static void addCategory(File readedXML, String newCategory)
                 throws ParserConfigurationException, IOException, SAXException, TransformerException {
             DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
             DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
             Document doc = xmlBuilder.parse(readedXML);
-            NodeList groups = doc.getElementsByTagName("Group");
 
-            for(int i = 0; i < groups.getLength(); i++){
-                Element group = (Element) groups.item(i);
-                if(group.getAttribute("name").equals(Category)){
-                    group.getParentNode().removeChild(group);
-                }
-            }
+            Element group = doc.createElement("Group");
+            group.setAttribute("name", newCategory);
+            doc.getDocumentElement().appendChild(group);
             saveChanges(doc, readedXML);
         }
 
@@ -112,6 +108,21 @@ public class XMLOperations {
             saveChanges(doc, readedXML);
         }
 
+        public static void deleteCategory(File readedXML, String Category)
+                throws ParserConfigurationException, IOException, SAXException, TransformerException {
+            DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
+            DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
+            Document doc = xmlBuilder.parse(readedXML);
+            NodeList groups = doc.getElementsByTagName("Group");
+
+            for(int i = 0; i < groups.getLength(); i++){
+                Element group = (Element) groups.item(i);
+                if(group.getAttribute("name").equals(Category)){
+                    group.getParentNode().removeChild(group);
+                }
+            }
+            saveChanges(doc, readedXML);
+        }
 
         public static ArrayList<Task> getDateTasks(File readedXML, String currentDate)
                 throws ParserConfigurationException, IOException, SAXException {

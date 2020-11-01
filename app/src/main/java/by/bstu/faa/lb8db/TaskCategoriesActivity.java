@@ -95,10 +95,13 @@ public class TaskCategoriesActivity extends AppCompatActivity {
         return  readCategories;
     }
 
-    public void addCategory(View view) throws IOException {
+    public void addCategory(View view) throws IOException,
+            TransformerException, SAXException, ParserConfigurationException {
         if(editCategory.getText().toString().length() > 0 && Categories.size() < MAX_CATEGORIES){
             Categories.add(editCategory.getText().toString());
             JSONOperations.Operations.saveString(Categories, FILENAME, super.getFilesDir());
+            XMLOperations.Operations.addCategory(new File(super.getFilesDir(), "LB8.xml"),
+                    editCategory.getText().toString());
 
             adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, Categories);
             listView.setAdapter(adapter);
