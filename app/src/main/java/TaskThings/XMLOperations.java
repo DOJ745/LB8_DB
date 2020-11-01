@@ -198,23 +198,27 @@ public class XMLOperations {
 
         public static void addTask(File readedXML, Task newTask)
                 throws ParserConfigurationException, IOException, SAXException, TransformerException {
+
             DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
             DocumentBuilder xmlBuilder = docBuildFact.newDocumentBuilder();
             Document doc = xmlBuilder.parse(readedXML);
 
-            Element rootElement = doc.getDocumentElement();
             Element task = doc.createElement("task");
-            rootElement.appendChild(task);
-            task.setAttribute("category", newTask.getCategory());
             task.setAttribute("id", String.valueOf(newTask.getId()));
-
             Element info = doc.createElement("info");
             info.appendChild(doc.createTextNode(newTask.getInfo()));
             task.appendChild(info);
-
             Element date = doc.createElement("date");
             date.appendChild(doc.createTextNode(newTask.getDate()));
             task.appendChild(date);
+
+            NodeList groups = doc.getElementsByTagName("Group");
+            for(int i = 0; i < groups.getLength(); i++){
+                Element groupElem = (Element) groups.item(i);
+                if(newTask.getCategory().equals(groupElem.getAttribute("name"))){
+                    groupElem.appendChild(task);
+                }
+            }
 
             saveChanges(doc, readedXML);
             Log.e("log_file", "Task added successfully!");

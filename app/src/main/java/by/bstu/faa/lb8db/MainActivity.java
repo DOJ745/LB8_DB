@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
     public void showTasks(View view){
         Intent intent = new Intent(this, TaskListActivity.class);
         intent.putExtra("TaskList", TASKS);
+        intent.putExtra("DATE", PICKED_DATE);
         startActivity(intent);
     }
 

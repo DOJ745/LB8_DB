@@ -32,6 +32,7 @@ public class TaskListActivity extends AppCompatActivity {
     public static String CHOOSED_CATEGORY;
     public static int CHOOSED_TASK;
     public static File XMLFILE;
+    public static String CURRENT_DATE;
 
     ArrayList<Task> CurrentTasks = new ArrayList<>();
     ArrayList<String> stingsTasks = new ArrayList<>();
@@ -113,6 +114,7 @@ public class TaskListActivity extends AppCompatActivity {
         Bundle arguments = getIntent().getExtras();
         try{
             CurrentTasks = (ArrayList<Task>) arguments.get("TaskList");
+            CURRENT_DATE = arguments.get("DATE").toString();
         }
         catch (NullPointerException e){
             Log.e("log_intent", "Categories not initialized!");
@@ -138,7 +140,7 @@ public class TaskListActivity extends AppCompatActivity {
         if(CHOOSED_CATEGORY.length() > 0){
             newTask.setCategory(CHOOSED_CATEGORY);
         }
-        newTask.setDate(CurrentTasks.get(0).getDate());
+        newTask.setDate(CURRENT_DATE);
 
         if(stingsTasks.size() < MAX_TASKS){
             stingsTasks.add(newTask.toString());
