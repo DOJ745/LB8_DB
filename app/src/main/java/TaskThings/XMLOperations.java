@@ -8,21 +8,26 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -151,6 +156,53 @@ public class XMLOperations {
             }
 
             return taskList;
+        }
+
+        public static void createXSLT(File filePath, String date) throws IOException {
+            String rawXSLT = "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n" +
+                    "xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\" exclude-result-prefixes=\"msxsl\">\n" +
+                    "\n" +
+                    "<xsl:output method=\"xml\" encoding=\"utf-16\"/>\n" +
+                    "\n" +
+                    "<xsl:template match=\"Tasks\">\n" +
+                    "\n" +
+                    "<xsl:for-each select=\"Group\">\n" +
+                    "   Категория: <xsl:value-of select=\"@name\"/><xsl:text/>\n" +
+                    "\n" +
+                    "<xsl:for-each select=\"task\">\n" +
+                    "<xsl:if test=\"date = '" + date + "'\">\n" +
+                    "Название - <xsl:value-of select=\"@id\"/><xsl:text/>\n" +
+                    "Info - <xsl:value-of select=\"info\"/><xsl:text/>\n" +
+                    "Дата - <xsl:value-of select=\"date\"/><xsl:text/>\n" +
+                    "</xsl:if>\n" +
+                    "</xsl:for-each>\n" +
+                    "\n" +
+                    "</xsl:for-each>\n" +
+                    "\n" +
+                    "</xsl:template>\n" +
+                    "\n" +
+                    "</xsl:stylesheet>";
+            File xsltFile = new File(filePath, "form.xslt");
+            xsltFile.createNewFile();
+            try(FileWriter writer = new FileWriter(xsltFile, false))
+            {
+                writer.write(rawXSLT);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public static void resultXSLT(String XMLFIle, String XSLTFile, File filePath)
+                throws IOException, TransformerException {
+            File txtFile = new File(filePath, "result.txt");
+            txtFile.createNewFile();
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Source xsltFile = new StreamSource(new File(filePath, XSLTFile));
+            Source xmlFile = new StreamSource(new File(filePath, XMLFIle));
+            OutputStream txtResult = new FileOutputStream(txtFile);
+
+            Transformer transformer = factory.newTransformer(xsltFile);
+            transformer.transform(xmlFile, new StreamResult(txtResult));
         }
 
         public static ArrayList<Task> findByXPath(File readedXML, String category)

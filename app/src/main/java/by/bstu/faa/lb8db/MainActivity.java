@@ -154,8 +154,15 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void showXSLT(View view){
+    public void showXSLT(View view) throws IOException {
         Intent intent = new Intent(this, XSLTActivity.class);
-        startActivity(intent);
+        if (PICKED_DATE != null) {
+            XMLOperations.Operations.createXSLT(super.getFilesDir(), PICKED_DATE);
+            startActivity(intent);
+        }
+        else{
+            Toast toast = Toast.makeText(getApplicationContext(), "Выберите дату!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 }
