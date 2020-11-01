@@ -151,7 +151,7 @@ public class XMLOperations {
             XPathFactory xpf = XPathFactory.newInstance();
             XPath xp = xpf.newXPath();
 
-            XPathExpression xpe = xp.compile("/Tasks/Group[@name='" + category + "']");
+            XPathExpression xpe = xp.compile("/Tasks/Group[@name='" + category + "']/task");
             NodeList nodes = (NodeList) xpe.evaluate(doc, XPathConstants.NODESET);
             ArrayList<Task> taskList = new ArrayList<>();
 
